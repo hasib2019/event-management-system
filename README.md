@@ -1,40 +1,146 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Event Management System
+
+A comprehensive event management system built with Next.js, TypeScript, and Tailwind CSS. This application allows users to create, view, search, and manage events with a modern, responsive interface.
+
+## Features
+
+### Core Features
+- **Event Listing**: View all upcoming events with search and category filters
+- **Event Details**: Detailed view of individual events with RSVP functionality
+- **Create Events**: Form-based event creation with validation
+- **My Events**: Personal dashboard to manage created events
+- **Event Management**: Edit and delete events you've created
+
+### Bonus Features
+- **RSVP System**: Track event attendance with RSVP functionality
+- **Event Editing**: Update event details after creation
+- **Responsive Design**: Mobile-friendly interface
+- **Local Storage**: Persistent data storage in browser
+- **Category Filtering**: Filter events by Conference, Workshop, or Meetup
+- **Search Functionality**: Search events by title
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (Pages Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: React Context API
+- **Data Persistence**: Local Storage
+- **Icons**: Heroicons (SVG)
+
+## Project Structure
+
+```
+src/
+├── components/           # Reusable UI components
+│   ├── EventCard.tsx    # Event display card
+│   ├── Header.tsx       # Navigation header
+│   ├── Layout.tsx       # Page layout wrapper
+│   └── SearchFilter.tsx # Search and filter component
+├── context/             # React Context for state management
+│   └── EventContext.tsx # Event state management
+├── pages/              # Next.js pages
+│   ├── api/            # API routes
+│   │   └── events.ts   # Mock events API
+│   ├── events/         # Dynamic event routes
+│   │   └── [id].tsx    # Event details page
+│   ├── edit-event/     # Edit event routes
+│   │   └── [id].tsx    # Edit event page
+│   ├── _app.tsx        # App wrapper with providers
+│   ├── create-event.tsx # Create event page
+│   ├── index.tsx       # Home page (event listing)
+│   └── my-events.tsx   # User's events page
+├── styles/             # Global styles
+│   └── globals.css     # Tailwind and custom CSS
+└── types/              # TypeScript type definitions
+    └── event.ts        # Event-related types
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd event-management-system
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+### Creating Events
+1. Navigate to "Create Event" in the header
+2. Fill in the event details:
+   - Title (required)
+   - Category (Conference, Workshop, Meetup)
+   - Date (required, must be future date)
+   - Location (required)
+   - Description (required)
+3. Submit the form to create the event
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### Managing Events
+1. Go to "My Events" to see events you've created
+2. Use "Edit" to modify event details
+3. Use "Delete" to remove events (with confirmation)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Discovering Events
+1. Browse all events on the home page
+2. Use the search bar to find events by title
+3. Filter by category using the dropdown
+4. Click "View Details" to see full event information
+5. Use "RSVP" to indicate attendance
 
-## Deploy on Vercel
+## API Routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `GET /api/events` - Returns mock event data
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Deploy with default settings
+
+### Manual Deployment
+
+1. Build the project:
+```bash
+npm run build
+```
+
+2. Deploy the `.next` folder and `package.json` to your hosting provider
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## License
+
+This project is licensed under the MIT License.
