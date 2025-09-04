@@ -4,26 +4,30 @@ export interface Event {
   description: string;
   date: string;
   location: string;
-  category: 'Conference' | 'Workshop' | 'Meetup';
-  createdBy?: string;
-  rsvpCount?: number;
-  rsvpUsers?: string[];
-}
-
-export interface EventFormData {
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  category: 'Conference' | 'Workshop' | 'Meetup';
+  category: 'Conference' | 'Workshop' | 'Meetup' | 'Networking' | 'Other';
+  createdBy?: string; // For tracking user-created events
+  rsvpCount: number;
+  hasRSVP?: boolean; // For tracking if current user has RSVP'd
 }
 
 export interface EventContextType {
   events: Event[];
-  myEvents: Event[];
-  addEvent: (event: EventFormData) => void;
+  addEvent: (event: Omit<Event, 'id' | 'rsvpCount'>) => void;
+  updateEvent: (id: string, event: Partial<Event>) => void;
   deleteEvent: (id: string) => void;
-  updateEvent: (id: string, event: EventFormData) => void;
-  toggleRSVP: (id: string, userId: string) => void;
-  getEventById: (id: string) => Event | undefined;
+  toggleRSVP: (eventId: string) => void;
+  getUserEvents: () => Event[];
+}
+
+export interface SearchFilterProps {
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+}
+
+export interface EventCardProps {
+  event: Event;
+  showActions?: boolean;
+  onDelete?: (id: string) => void;
 }

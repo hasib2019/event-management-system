@@ -1,134 +1,135 @@
+import React from 'react';
 import Link from 'next/link';
-import { Event } from '@/types/event';
+import { EventCardProps } from '@/types/event';
 import { useEvents } from '@/context/EventContext';
 
-interface EventCardProps {
-  event: Event;
-  showActions?: boolean;
-  showRSVP?: boolean;
-}
-
-const EventCard: React.FC<EventCardProps> = ({ event, showActions = false, showRSVP = false }) => {
-  const { deleteEvent, toggleRSVP } = useEvents();
-  const currentUserId = 'user-123'; // Simulated user ID
+export default function EventCard({ event, showActions = false, onDelete }: EventCardProps) {
+  const { toggleRSVP } = useEvents();
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Conference':
-        return 'bg-blue-100 text-blue-800';
-      case 'Workshop':
-        return 'bg-green-100 text-green-800';
-      case 'Meetup':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+    const colors = {
+      Conference: 'bg-blue-100 text-blue-800',
+      Workshop: 'bg-green-100 text-green-800',
+      Meetup: 'bg-purple-100 text-purple-800',
+      Networking: 'bg-orange-100 text-orange-800',
+      Other: 'bg-gray-100 text-gray-800',
+    };
+    return colors[category as keyof typeof colors] || colors.Other;
   };
 
-  const isRSVPed = event.rsvpUsers?.includes(currentUserId) || false;
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      deleteEvent(event.id);
-    }
-  };
-
-  const handleRSVP = () => {
-    toggleRSVP(event.id, currentUserId);
-  };
+  const isUpcoming = new Date(event.date) >= new Date();
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <div className="p-6">
-        <div className="flex justify-between items-start mb-2">
+        {/* Header with title and category */}
+        <div className="flex items-start justify-between mb-3">
           <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
             {event.title}
           </h3>
-          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(event.category)}`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(event.category)}`}>
             {event.category}
           </span>
         </div>
-        
-        <p className="text-gray-600 mb-4 line-clamp-2">
+
+        {/* Description */}
+        <p className="text-gray-600 mb-4 line-clamp-3">
           {event.description}
         </p>
-        
+
+        {/* Event details */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm text-gray-500">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            {formatDate(event.date)}
+            <span>{formatDate(event.date)} at {formatTime(event.date)}</span>
           </div>
-          
           <div className="flex items-center text-sm text-gray-500">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            {event.location}
+            <span>{event.location}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>{event.rsvpCount} attending</span>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center justify-between">
+          <div className="flex space-x-2">
+            <Link
+              href={`/events/${event.id}`}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              View Details
+            </Link>
+            
+            {isUpcoming && (
+              <button
+                onClick={() => toggleRSVP(event.id)}
+                className={`inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  event.hasRSVP
+                    ? 'border-red-300 text-red-700 bg-red-50 hover:bg-red-100 focus:ring-red-500'
+                    : 'border-green-300 text-green-700 bg-green-50 hover:bg-green-100 focus:ring-green-500'
+                }`}
+              >
+                {event.hasRSVP ? 'Cancel RSVP' : 'RSVP'}
+              </button>
+            )}
           </div>
 
-          {event.rsvpCount !== undefined && (
-            <div className="flex items-center text-sm text-gray-500">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-              {event.rsvpCount} attending
-            </div>
-          )}
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href={`/events/${event.id}`}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-          >
-            View Details
-          </Link>
-          
-          {showRSVP && (
-            <button
-              onClick={handleRSVP}
-              className={`px-4 py-2 rounded-md transition-colors text-sm font-medium ${
-                isRSVPed
-                  ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-              }`}
-            >
-              {isRSVPed ? 'RSVP&apos;d' : 'RSVP'}
-            </button>
-          )}
-          
-          {showActions && (
-            <>
+          {showActions && onDelete && (
+            <div className="flex space-x-2">
               <Link
                 href={`/edit-event/${event.id}`}
-                className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors text-sm font-medium"
+                className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
                 Edit
               </Link>
-              
               <button
-                onClick={handleDelete}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
+                onClick={() => onDelete(event.id)}
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
               >
                 Delete
               </button>
-            </>
+            </div>
           )}
         </div>
+
+        {/* Status indicator */}
+        {!isUpcoming && (
+          <div className="mt-3 flex items-center text-sm text-gray-500">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Event has ended</span>
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default EventCard;
+}

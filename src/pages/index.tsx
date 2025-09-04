@@ -66,7 +66,6 @@ export default function Home() {
               <EventCard
                 key={event.id}
                 event={event}
-                showRSVP={true}
               />
             ))}
           </div>
